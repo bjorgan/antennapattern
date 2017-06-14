@@ -1,0 +1,7 @@
+/*!
+ * \defgroup block GNU Radio ANTENNAPATTERN C++ Signal Processing Blocks
+ * \brief All C++ blocks that can be used from the ANTENNAPATTERN GNU Radio
+ *        module are listed here or in the subcategories below.
+ *
+ */
+

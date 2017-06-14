@@ -1,0 +1,15 @@
+<block>
+  <name>Antenna angle tagger</name>
+  <key>antennapattern_antenna_angle_tagger</key>
+  <category>[ANTENNAPATTERN]</category>
+  <import>import antennapattern</import>
+  <make>antennapattern.antenna_angle_tagger()</make>
+  <sink>
+    <name>in</name>
+    <type>float</type>
+  </sink>
+  <source>
+    <name>out</name>
+    <type>float</type>
+  </source>
+</block>

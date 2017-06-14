@@ -1,0 +1,15 @@
+<block>
+  <name>Powerestimation cf</name>
+  <key>antennapattern_powerestimation_cf</key>
+  <category>[ANTENNAPATTERN]</category>
+  <import>import antennapattern</import>
+  <make>antennapattern.powerestimation_cf()</make>
+  <sink>
+    <name>in</name>
+    <type>complex</type>
+  </sink>
+  <source>
+    <name>out</name>
+    <type>float</type>
+  </source>
+</block>

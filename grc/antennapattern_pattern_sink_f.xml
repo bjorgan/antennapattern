@@ -1,0 +1,16 @@
+<block>
+  <name>Pattern sink f</name>
+  <key>antennapattern_pattern_sink_f</key>
+  <category>[ANTENNAPATTERN]</category>
+  <import>import antennapattern</import>
+  <make>antennapattern.pattern_sink_f($filename)</make>
+  <param>
+    <name>Filename</name>
+    <key>filename</key>
+    <type>string</type>
+  </param>
+  <sink>
+    <name>in</name>
+    <type>float</type>
+  </sink>
+</block>
