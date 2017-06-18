@@ -203,7 +203,7 @@ namespace gr {
 
         //set output to difference between low and high level if current sample belongs to the high level
         if (d_ready && (cluster_distance(d_high_level_cluster, magnitude) < cluster_distance(d_low_level_cluster, magnitude))) {
-          out[output_index++] = magnitude - d_low_level_cluster.mean;
+          out[output_index++] = 20*log10(magnitude) - 20*log10(d_low_level_cluster.mean);
         }
       }
 
