@@ -10,12 +10,12 @@ namespace gr {
   namespace antennapattern {
 
     artificial_angle_tagger::sptr
-    artificial_angle_tagger::make(double start_azimuth, double end_azimuth)
+    artificial_angle_tagger::make(double start_azimuth, double end_azimuth, double tot_num_samples)
     {
       return gnuradio::get_initial_sptr
-        (new artificial_angle_tagger_impl(start_azimuth, end_azimuth));
+        (new artificial_angle_tagger_impl(start_azimuth, end_azimuth, tot_num_samples));
     }
-    void artificial_angle_tagger::set_num_samples(long tot_num_samples) {
+    void artificial_angle_tagger::set_num_samples(double tot_num_samples) {
       d_num_samples = tot_num_samples;
       d_sample_increment = tot_num_samples/(d_end_azimuth - d_start_azimuth);
     }
@@ -23,14 +23,14 @@ namespace gr {
     /*
      * The private constructor
      */
-    artificial_angle_tagger_impl::artificial_angle_tagger_impl(double start_azimuth, double end_azimuth)
+    artificial_angle_tagger_impl::artificial_angle_tagger_impl(double start_azimuth, double end_azimuth, long tot_num_samples)
       : gr::sync_block("artificial_angle_tagger",
               gr::io_signature::make(1, 1, sizeof(float)),
               gr::io_signature::make(1, 1, sizeof(float))), d_azimuth(0.0f), d_elevation(0.0f), d_samples_since_last_increment(0)
     {
       set_start_azimuth(start_azimuth);
       set_end_azimuth(end_azimuth);
-      set_num_samples(0);
+      set_num_samples(tot_num_samples);
     }
 
     /*

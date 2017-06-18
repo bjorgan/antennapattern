@@ -19,7 +19,7 @@ namespace gr {
       bool d_meta_header_received;
 
      public:
-      artificial_angle_tagger_impl(double start_azimuth, double end_azimuth);
+      artificial_angle_tagger_impl(double start_azimuth, double end_azimuth, long tot_num_samples);
       ~artificial_angle_tagger_impl();
 
       int work(int noutput_items,

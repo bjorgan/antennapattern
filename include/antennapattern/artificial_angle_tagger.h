@@ -26,12 +26,12 @@ namespace gr {
        * \brief Return a shared_ptr to a new instance of antennapattern::artificial_angle_tagger.
        *
        */
-      static sptr make(double start_azimuth, double end_azimuth);
+      static sptr make(double start_azimuth, double end_azimuth, double tot_num_samples = 0);
 
       /**
        * Set total expected number of samples, and calculate appropriate sample increment.
        **/
-      void set_num_samples(long tot_num_samples);
+      void set_num_samples(double tot_num_samples);
 
       /**
        * Get expected number of samples.
