@@ -1,38 +1,25 @@
-<?xml version="1.0"?>
 <block>
-  <name>artificial_angle_tagger</name>
+  <name>Artificial angle tagger</name>
   <key>antennapattern_artificial_angle_tagger</key>
-  <category>[antennapattern]</category>
+  <category>[ANTENNAPATTERN]</category>
   <import>import antennapattern</import>
-  <make>antennapattern.artificial_angle_tagger()</make>
-  <!-- Make one 'param' node for every Parameter you want settable from the GUI.
-       Sub-nodes:
-       * name
-       * key (makes the value accessible as $keyname, e.g. in the make node)
-       * type -->
+  <make>antennapattern.artificial_angle_tagger($start_azimuth, $end_azimuth)</make>
   <param>
-    <name>...</name>
-    <key>...</key>
-    <type>...</type>
+    <name>Start_azimuth</name>
+    <key>start_azimuth</key>
+    <type>real</type>
   </param>
-
-  <!-- Make one 'sink' node per input. Sub-nodes:
-       * name (an identifier for the GUI)
-       * type
-       * vlen
-       * optional (set to 1 for optional inputs) -->
+  <param>
+    <name>End_azimuth</name>
+    <key>end_azimuth</key>
+    <type>real</type>
+  </param>
   <sink>
     <name>in</name>
-    <type><!-- e.g. int, float, complex, byte, short, xxx_vector, ...--></type>
+    <type>float</type>
   </sink>
-
-  <!-- Make one 'source' node per output. Sub-nodes:
-       * name (an identifier for the GUI)
-       * type
-       * vlen
-       * optional (set to 1 for optional inputs) -->
   <source>
     <name>out</name>
-    <type><!-- e.g. int, float, complex, byte, short, xxx_vector, ...--></type>
+    <type>float</type>
   </source>
 </block>
