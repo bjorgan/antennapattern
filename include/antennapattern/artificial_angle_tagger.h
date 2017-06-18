@@ -12,7 +12,13 @@ namespace gr {
      * \ingroup antennapattern
      *
      * \details
-     * Tags stream with angles, like antenna_angle_tagger. Increments the angle every other n samples (input to make()).
+     * Tags stream with angles, like antenna_angle_tagger, but by incrementing
+     * the angle every other n samples instead of reading from rotctld.
+     * Increments the angle so that the angle goes from the start_azimuth to
+     * the end_azimuth during the expected number of samples (d_num_samples).
+     * Tries to obtain the number of samples from metafile source tags
+     * transmitted in the stream if the total expected number of samples is not
+     * set.
      */
     class ANTENNAPATTERN_API artificial_angle_tagger : virtual public gr::sync_block
     {
