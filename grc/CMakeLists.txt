@@ -20,5 +20,6 @@
 install(FILES
     antennapattern_powerestimation_cf.xml
     antennapattern_antenna_angle_tagger.xml
-    antennapattern_pattern_sink_f.xml DESTINATION share/gnuradio/grc/blocks
+    antennapattern_pattern_sink_f.xml
+    antennapattern_artificial_angle_tagger.xml DESTINATION share/gnuradio/grc/blocks
 )

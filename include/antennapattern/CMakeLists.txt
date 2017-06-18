@@ -24,5 +24,6 @@ install(FILES
     api.h
     powerestimation_cf.h
     antenna_angle_tagger.h
-    pattern_sink_f.h DESTINATION include/antennapattern
+    pattern_sink_f.h
+    artificial_angle_tagger.h DESTINATION include/antennapattern
 )

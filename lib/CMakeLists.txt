@@ -29,6 +29,7 @@ list(APPEND antennapattern_sources
     powerestimation_cf_impl.cc
     antenna_angle_tagger_impl.cc
     pattern_sink_f_impl.cc
+    artificial_angle_tagger_impl.cc
 )
 
 set(antennapattern_sources "${antennapattern_sources}" PARENT_SCOPE)
