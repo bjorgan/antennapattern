@@ -24,8 +24,11 @@ from gnuradio import blocks
 import antennapattern_swig as antennapattern
 import numpy as np
 
-class qa_powerestimation_cf (gr_unittest.TestCase):
+def power(low_value, high_value):
+    return 20*np.log10(high_value) - 20*np.log10(low_value);
 
+
+class qa_powerestimation_cf (gr_unittest.TestCase):
     def setUp (self):
         self.tb = gr.top_block ()
 
@@ -40,7 +43,7 @@ class qa_powerestimation_cf (gr_unittest.TestCase):
         stdev = 0.01;
         src_data[::2] = np.random.normal(low_value, stdev, len(src_data[::2]));
         src_data[1::2] = np.random.normal(high_value, stdev, len(src_data[1::2]));
-        expected_result = high_value-low_value;
+        expected_result = power(low_value, high_value);
         src = blocks.vector_source_c(src_data);
 
         #set up blocks
@@ -55,14 +58,14 @@ class qa_powerestimation_cf (gr_unittest.TestCase):
         #check data
         result_data = dst.data()
         self.assertTrue(len(result_data) > 0)
-        self.assertAlmostEqual(expected_result, np.mean(result_data), 1)
+        self.assertAlmostEqual(expected_result, np.mean(result_data), 0)
 
     def test_003_clustered_values_t (self):
         #set up vector of normally distributed values, with the 500 first being normally distributed around low level, and the next 500 around high level
         low_level = 0.1;
         high_level = 0.6;
         src_data = np.concatenate([np.random.normal(low_level, 0.01, 500), np.random.normal(high_level, 0.01, 500)], axis=0);
-        expected_result = high_level - low_level;
+        expected_result = power(low_level, high_level);
 
         #set up blocks
         src = blocks.vector_source_c(src_data);
@@ -78,14 +81,14 @@ class qa_powerestimation_cf (gr_unittest.TestCase):
         # check data
         result_data = dst.data()
         self.assertTrue(len(result_data) > 0)
-        self.assertAlmostEqual(expected_result, np.mean(result_data), 1)
+        self.assertAlmostEqual(expected_result, np.mean(result_data), 0)
 
     def test_004_clustered_values_longrange_during_first_t (self):
         #do same as above, but let low values have a much longer duration than the high values
         mean_1 = 0.1;
         mean_2 = 0.6;
         src_data = np.concatenate([np.random.normal(mean_1, 0.01, 500000), np.random.normal(mean_2, 0.01, 500)], axis=0);
-        expected_result = mean_2 - mean_1;
+        expected_result = power(mean_1, mean_2);
 
         #set up blocks
         src = blocks.vector_source_c(src_data);
@@ -101,7 +104,7 @@ class qa_powerestimation_cf (gr_unittest.TestCase):
         # check data
         result_data = dst.data()
         self.assertTrue(len(result_data) > 0)
-        self.assertAlmostEqual(expected_result, np.mean(result_data), 1)
+        self.assertAlmostEqual(expected_result, np.mean(result_data), 0)
 
 
 if __name__ == '__main__':
