@@ -23,7 +23,52 @@ namespace gr {
        * \brief Return a shared_ptr to a new instance of antennapattern::artificial_angle_tagger.
        *
        */
-      static sptr make(long sample_increment);
+      static sptr make(double start_azimuth, double end_azimuth);
+
+      /**
+       * Set total expected number of samples, and calculate appropriate sample increment.
+       **/
+      void set_num_samples(long tot_num_samples);
+
+      /**
+       * Get expected number of samples.
+       **/
+      long num_samples(){return d_num_samples;};
+
+      /**
+       * Set start azimuth.
+       **/
+      void set_start_azimuth(double start_azimuth){d_start_azimuth = start_azimuth;};
+
+      /**
+       * Get start azimuth.
+       **/
+      double start_azimuth(){return d_start_azimuth;};
+
+      /**
+       * Set end azimuth.
+       **/
+      void set_end_azimuth(double end_azimuth){d_end_azimuth = end_azimuth;};
+
+      /**
+       * Get end azimuth.
+       **/
+      double end_azimuth(){return d_end_azimuth;};
+
+      /**
+       * Get sample increment.
+       **/
+      long sample_increment(){return d_sample_increment;};
+     private:
+      ///total expected number of samples
+      long d_num_samples;
+      ///start azimuth angle
+      double d_start_azimuth;
+      ///last azimuth angle to send
+      double d_end_azimuth;
+      ///increment azimuth by 1 degree every time we reach this number of samples. Calculated from start and end azimuth angle
+      ///and the total expected number of samples.
+      long d_sample_increment;
     };
 
   } // namespace antennapattern

@@ -10,20 +10,28 @@ namespace gr {
   namespace antennapattern {
 
     artificial_angle_tagger::sptr
-    artificial_angle_tagger::make(long sample_increment)
+    artificial_angle_tagger::make(double start_azimuth, double end_azimuth)
     {
       return gnuradio::get_initial_sptr
-        (new artificial_angle_tagger_impl(sample_increment));
+        (new artificial_angle_tagger_impl(start_azimuth, end_azimuth));
+    }
+    void artificial_angle_tagger::set_num_samples(long tot_num_samples) {
+      d_num_samples = tot_num_samples;
+      d_sample_increment = tot_num_samples/(d_end_azimuth - d_start_azimuth);
     }
 
     /*
      * The private constructor
      */
-    artificial_angle_tagger_impl::artificial_angle_tagger_impl(long sample_increment)
+    artificial_angle_tagger_impl::artificial_angle_tagger_impl(double start_azimuth, double end_azimuth)
       : gr::sync_block("artificial_angle_tagger",
               gr::io_signature::make(1, 1, sizeof(float)),
-              gr::io_signature::make(1, 1, sizeof(float))), d_sample_increment(sample_increment), d_azimuth(0.0f), d_elevation(0.0f), d_samples_since_last_increment(0)
-    {}
+              gr::io_signature::make(1, 1, sizeof(float))), d_azimuth(0.0f), d_elevation(0.0f), d_samples_since_last_increment(0)
+    {
+      set_start_azimuth(start_azimuth);
+      set_end_azimuth(end_azimuth);
+      set_num_samples(1);
+    }
 
     /*
      * Our virtual destructor.
@@ -43,16 +51,16 @@ namespace gr {
 
       //get number of times we should increment the azimuth angle
       d_samples_since_last_increment += noutput_items;
-      long times_exceeded = d_samples_since_last_increment/d_sample_increment;
+      long times_exceeded = d_samples_since_last_increment/sample_increment();
       if (times_exceeded > 0) {
-        d_samples_since_last_increment = d_samples_since_last_increment % d_sample_increment;
+        d_samples_since_last_increment = d_samples_since_last_increment % sample_increment();
       }
 
       //set azimuth angle changes at increment steps
       for (int i=0; i < times_exceeded; i++) {
         pmt::pmt_t tag_key = pmt::string_to_symbol(ANTENNA_ANGLE_TAG);
         pmt::pmt_t tag_value = pmt::from_float(d_azimuth + i);
-        add_item_tag(0, nitems_written(0) + i*d_sample_increment, tag_key, tag_value);
+        add_item_tag(0, nitems_written(0) + i*sample_increment(), tag_key, tag_value);
       }
       d_azimuth += times_exceeded;
 

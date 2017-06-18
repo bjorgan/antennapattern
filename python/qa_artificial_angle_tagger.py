@@ -23,7 +23,8 @@ class qa_artificial_angle_tagger (gr_unittest.TestCase):
         #set up blocks
         src = blocks.vector_source_f(src_data);
         sample_increment = num_samples/(end_degree - start_degree);
-        tagger = antennapattern.artificial_angle_tagger(sample_increment);
+        tagger = antennapattern.artificial_angle_tagger(start_degree, end_degree);
+        tagger.set_num_samples(num_samples)
         dst = blocks.vector_sink_f();
 
         self.tb.connect(src, tagger);
