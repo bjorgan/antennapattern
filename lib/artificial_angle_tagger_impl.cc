@@ -30,7 +30,7 @@ namespace gr {
     {
       set_start_azimuth(start_azimuth);
       set_end_azimuth(end_azimuth);
-      set_num_samples(1);
+      set_num_samples(0);
     }
 
     /*
@@ -48,6 +48,29 @@ namespace gr {
       const float *in = (const float *) input_items[0];
       float *out = (float *) output_items[0];
       memcpy(out, in, sizeof(float)*noutput_items);
+
+      if (num_samples() == 0) {
+        //assuming meta file source, try to get number of samples from tags in the stream
+        size_t item_size = 0;
+        std::vector<tag_t> tags;
+        get_tags_in_range(tags, 0, nitems_read(0), nitems_read(0) + noutput_items, pmt::mp("size"));
+        if (tags.size() == 1) {
+          item_size = pmt::to_long(tags[0].value);
+        } else {
+          throw std::runtime_error("Could not obtain 'size' tag from stream/unexpected number of size tags. Source needs to be a metafile source block.");
+        }
+
+        size_t file_size = 0;
+        tags.clear();
+        get_tags_in_range(tags, 0, nitems_read(0), nitems_read(0) + noutput_items, pmt::mp("bytes"));
+        if (tags.size() == 1) {
+          file_size = pmt::to_long(tags[0].value);
+        } else {
+          throw std::runtime_error("Could not obtain 'bytes' tag from stream/unexpected number of bytes tags. Source needs to be a metafile source block.");
+        }
+
+        set_num_samples(file_size/item_size);
+      }
 
       //get number of times we should increment the azimuth angle
       d_samples_since_last_increment += noutput_items;

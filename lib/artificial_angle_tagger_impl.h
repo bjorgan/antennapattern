@@ -15,6 +15,8 @@ namespace gr {
       float d_elevation;
       ///number of samples since last azimuth increment
       long d_samples_since_last_increment;
+      ///whether we have received the meta file header information
+      bool d_meta_header_received;
 
      public:
       artificial_angle_tagger_impl(double start_azimuth, double end_azimuth);
