@@ -3,7 +3,7 @@
   <key>antennapattern_artificial_angle_tagger</key>
   <category>[ANTENNAPATTERN]</category>
   <import>import antennapattern</import>
-  <make>antennapattern.artificial_angle_tagger($start_azimuth, $end_azimuth)</make>
+  <make>antennapattern.artificial_angle_tagger($start_azimuth, $end_azimuth, $tot_num_samples)</make>
   <param>
     <name>Start_azimuth</name>
     <key>start_azimuth</key>
@@ -12,6 +12,11 @@
   <param>
     <name>End_azimuth</name>
     <key>end_azimuth</key>
+    <type>real</type>
+  </param>
+  <param>
+    <name>Tot_num_samples</name>
+    <key>tot_num_samples</key>
     <type>real</type>
   </param>
   <sink>
