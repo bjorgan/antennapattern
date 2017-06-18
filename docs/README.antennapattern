@@ -18,3 +18,7 @@ Summed up, the gnuradio blocks in this package will:
 See each individual block for details.
 
 Since pattern_sink_f collects power at each tagged angle, you can safely turn around your antenna wildly until you are satisfied with the estimated statistics. The blocks here will not rotate the antenna automatically.
+
+Also has a block artificial_angle_tagger for tagging the stream
+with linearly increasing angles from a defined start to end, for testing
+the functionality against an existing, captured metafile.
