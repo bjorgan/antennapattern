@@ -25,8 +25,8 @@ namespace gr {
      */
     artificial_angle_tagger_impl::artificial_angle_tagger_impl(double start_azimuth, double end_azimuth, long tot_num_samples)
       : gr::sync_block("artificial_angle_tagger",
-              gr::io_signature::make(1, 1, sizeof(float)),
-              gr::io_signature::make(1, 1, sizeof(float))), d_azimuth(0.0f), d_elevation(0.0f), d_samples_since_last_increment(0)
+              gr::io_signature::make(1, 1, sizeof(gr_complex)),
+              gr::io_signature::make(1, 1, sizeof(gr_complex))), d_azimuth(0.0f), d_elevation(0.0f), d_samples_since_last_increment(0)
     {
       set_start_azimuth(start_azimuth);
       set_end_azimuth(end_azimuth);
@@ -45,9 +45,9 @@ namespace gr {
         gr_vector_const_void_star &input_items,
         gr_vector_void_star &output_items)
     {
-      const float *in = (const float *) input_items[0];
-      float *out = (float *) output_items[0];
-      memcpy(out, in, sizeof(float)*noutput_items);
+      const gr_complex *in = (const gr_complex *) input_items[0];
+      gr_complex *out = (gr_complex *) output_items[0];
+      memcpy(out, in, sizeof(gr_complex)*noutput_items);
 
       if (num_samples() == 0) {
         throw std::runtime_error("Total number of samples not set. Set total number of samples so that angles are incremented correctly.");
