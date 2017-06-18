@@ -41,23 +41,20 @@ namespace gr {
       float *out = (float *) output_items[0];
       memcpy(out, in, sizeof(float)*noutput_items);
 
-      double prev_azimuth = d_azimuth;
-
+      //get number of times we should increment the azimuth angle
       d_samples_since_last_increment += noutput_items;
-
       long times_exceeded = d_samples_since_last_increment/d_sample_increment;
       if (times_exceeded > 0) {
-              d_azimuth += times_exceeded;
-              d_sample_increment = d_samples_since_last_increment % d_sample_increment;
+        d_samples_since_last_increment = d_samples_since_last_increment % d_sample_increment;
       }
 
-      if (round(d_azimuth) != round(prev_azimuth)) {
-        //tag stream by current azimuth if the new azimuth differ from the previous
-        //at a precision of 1 degree
+      //set azimuth angle changes at increment steps
+      for (int i=0; i < times_exceeded; i++) {
         pmt::pmt_t tag_key = pmt::string_to_symbol(ANTENNA_ANGLE_TAG);
-        pmt::pmt_t tag_value = pmt::from_float(d_azimuth);
-        add_item_tag(0, nitems_written(0), tag_key, tag_value);
+        pmt::pmt_t tag_value = pmt::from_float(d_azimuth + i);
+        add_item_tag(0, nitems_written(0) + i*d_sample_increment, tag_key, tag_value);
       }
+      d_azimuth += times_exceeded;
 
       // Tell runtime system how many output items we produced.
       return noutput_items;
