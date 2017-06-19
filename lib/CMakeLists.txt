@@ -17,6 +17,10 @@
 # the Free Software Foundation, Inc., 51 Franklin Street,
 # Boston, MA 02110-1301, USA.
 
+#####
+# Qt
+#####
+
 ########################################################################
 # Setup library
 ########################################################################
@@ -24,13 +28,12 @@ include(GrPlatform) #define LIB_SUFFIX
 
 include_directories(${Boost_INCLUDE_DIR})
 link_directories(${Boost_LIBRARY_DIRS})
-
 list(APPEND antennapattern_sources
     powerestimation_cf_impl.cc
     antenna_angle_tagger_impl.cc
     pattern_sink_f_impl.cc
     artificial_angle_tagger_impl.cc
-)
+    pattern_plot_sink_f_impl.cc )
 
 set(antennapattern_sources "${antennapattern_sources}" PARENT_SCOPE)
 if(NOT antennapattern_sources)

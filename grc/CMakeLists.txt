@@ -16,10 +16,10 @@
 # along with GNU Radio; see the file COPYING.  If not, write to
 # the Free Software Foundation, Inc., 51 Franklin Street,
 # Boston, MA 02110-1301, USA.
-
 install(FILES
     antennapattern_powerestimation_cf.xml
     antennapattern_antenna_angle_tagger.xml
     antennapattern_pattern_sink_f.xml
-    antennapattern_artificial_angle_tagger.xml DESTINATION share/gnuradio/grc/blocks
+    antennapattern_artificial_angle_tagger.xml
+    antennapattern_pattern_plot_sink_f.xml DESTINATION share/gnuradio/grc/blocks
 )
