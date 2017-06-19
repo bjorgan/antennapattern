@@ -26,17 +26,42 @@
 
 namespace gr {
   namespace antennapattern {
-
-    class pattern_sink_f_impl : public pattern_sink_f
-    {
+    /**
+     * Map input values to angles.
+     **/
+    class angle_mapper {
      private:
       ///current antenna pattern: Maps angles at 1 degrees precision
       ///to means and standard deviations.
       std::map<int, gr::antennapattern::cluster> d_pattern;
       ///current azimuth
       double d_azimuth;
+     public:
+      /**
+       * Add samples to map.
+       *
+       * \param angle_tags Tags obtained from stream, containing azimuth angle values
+       * \param tag_offset Current number of read items (absolute expected start offset of tags)
+       * \param num_samples Number of input samples
+       * \param samples Input samples
+       **/
+      void add_samples(std::vector<gr::tag_t> angle_tags, long tag_offset, int num_samples, const float *samples);
+
+      /**
+       * Output map to file.
+       *
+       * \param filename Output filename
+       **/
+      void to_file(std::string filename);
+    };
+
+    class pattern_sink_f_impl : public pattern_sink_f
+    {
+     private:
       ///output filename to which output is written when this block is stopped
       std::string d_output_filename;
+      ///angle-mapped power values
+      angle_mapper d_mapped_values;
 
      public:
       pattern_sink_f_impl(std::string filename);
@@ -44,7 +69,7 @@ namespace gr {
 
       /**
        * Reimplemented from gr::sync_block::stop(): Writes
-       * d_pattern to file d_output_filename before calling gr::sync_block::stop().
+       * d_mapped_values to file d_output_filename before calling gr::sync_block::stop().
        **/
       bool stop();
 
