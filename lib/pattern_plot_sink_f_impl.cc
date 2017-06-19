@@ -34,19 +34,24 @@
 #include <qwt-qt4/qwt_symbol.h>
 #include <qwt-qt4/qwt_plot_marker.h>
 
+#include <QMetaType>
+
 namespace gr {
   namespace antennapattern {
     polar_diagram_widget::polar_diagram_widget(QWidget *parent) : QWidget(parent)
     {
+      qRegisterMetaType<QVector<double> >("QVector<double>");
       plot = new QwtPlot(this);
 
       QGridLayout *layout = new QGridLayout(this);
       layout->addWidget(plot, 0, 0);
 
-      QwtPlotCurve *curve = new QwtPlotCurve;
+      curve = new QwtPlotCurve;
       curve->attach(plot);
+
+      connect(this, SIGNAL(should_update_plot(QVector<double>, QVector<double>)), this, SLOT(update_plot(QVector<double>, QVector<double>)));
     }
-    
+
     void polar_diagram_widget::update_plot(QVector<double> angles, QVector<double> magnitudes)
     {
       QVector<double> x_values, y_values;
@@ -58,6 +63,11 @@ namespace gr {
       plot->replot();
     }
 
+    void polar_diagram_widget::update_plot_from_external(QVector<double> angles, QVector<double> magnitudes)
+    {
+      emit should_update_plot(angles, magnitudes);
+    }
+
     pattern_plot_sink_f::sptr
     pattern_plot_sink_f::make()
     {
@@ -65,20 +75,18 @@ namespace gr {
         (new pattern_plot_sink_f_impl());
     }
 
-    /*
-     * The private constructor
-     */
     pattern_plot_sink_f_impl::pattern_plot_sink_f_impl()
       : gr::sync_block("pattern_plot_sink_f",
               gr::io_signature::make(1, 1, sizeof(float)),
               gr::io_signature::make(0, 0, 0))
-    {}
+    {
+      polar_plot = new gr::antennapattern::polar_diagram_widget;
+      polar_plot->show();
+    }
 
-    /*
-     * Our virtual destructor.
-     */
     pattern_plot_sink_f_impl::~pattern_plot_sink_f_impl()
     {
+      delete [] polar_plot;
     }
 
     int
@@ -93,6 +101,10 @@ namespace gr {
       get_tags_in_range(tags, 0, nitems_read(0), nitems_read(0) + noutput_items, pmt::mp(ANTENNA_ANGLE_TAG));
 
       d_mapped_values.add_samples(tags, nitems_read(0), noutput_items, in);
+
+      std::vector<double> angles, magnitudes;
+      d_mapped_values.get_pattern(angles, magnitudes);
+      polar_plot->update_plot_from_external(QVector<double>::fromStdVector(angles), QVector<double>::fromStdVector(magnitudes));
 
       return noutput_items;
     }

@@ -62,6 +62,18 @@ namespace gr {
       }
       fclose(fp);
     }
+    
+    void angle_mapper::get_pattern(std::vector<double> &angles, std::vector<double> &magnitudes)
+    {
+      angles.clear();
+      magnitudes.clear();
+      for (auto const &item : d_pattern) {
+        int azimuth = item.first;
+        struct cluster cluster = item.second;
+        angles.push_back(azimuth);
+        magnitudes.push_back(cluster.mean);
+      }
+    }
 
     pattern_sink_f::sptr
     pattern_sink_f::make(std::string filename)

@@ -24,19 +24,21 @@
 #include <antennapattern/pattern_plot_sink_f.h>
 #include "pattern_sink_f_impl.h"
 
+
 namespace gr {
   namespace antennapattern {
+    class polar_diagram_widget;
 
     class pattern_plot_sink_f_impl : public pattern_plot_sink_f
     {
      private:
       angle_mapper d_mapped_values;
+      gr::antennapattern::polar_diagram_widget *polar_plot;
 
      public:
       pattern_plot_sink_f_impl();
       ~pattern_plot_sink_f_impl();
 
-      // Where all the action really happens
       int work(int noutput_items,
          gr_vector_const_void_star &input_items,
          gr_vector_void_star &output_items);

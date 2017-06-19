@@ -23,6 +23,7 @@
 
 #include <antennapattern/pattern_sink_f.h>
 #include "powerestimation_cf_impl.h"
+#include <vector>
 
 namespace gr {
   namespace antennapattern {
@@ -53,6 +54,8 @@ namespace gr {
        * \param filename Output filename
        **/
       void to_file(std::string filename);
+
+      void get_pattern(std::vector<double> &angles, std::vector<double> &magnitudes);
     };
 
     class pattern_sink_f_impl : public pattern_sink_f
