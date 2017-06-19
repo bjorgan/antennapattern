@@ -25,12 +25,14 @@
 #include <gnuradio/io_signature.h>
 #include "pattern_plot_sink_f_impl.h"
 #include "antenna_angle_tagger_impl.h"
+#include "polar_diagram_widget.h"
+#include <QGridLayout>
 
-#include <qwt_plot.h>
-#include <qwt_plot_curve.h>
-#include <qwt_legend.h>
-#include <qwt_symbol.h>
-#include <qwt_plot_marker.h>
+#include <qwt-qt4/qwt_plot.h>
+#include <qwt-qt4/qwt_plot_curve.h>
+#include <qwt-qt4/qwt_legend.h>
+#include <qwt-qt4/qwt_symbol.h>
+#include <qwt-qt4/qwt_plot_marker.h>
 
 namespace gr {
   namespace antennapattern {
@@ -40,6 +42,7 @@ namespace gr {
 
       QGridLayout *layout = new QGridLayout(this);
       layout->addWidget(plot, 0, 0);
+
       QwtPlotCurve *curve = new QwtPlotCurve;
       curve->attach(plot);
     }
@@ -51,7 +54,7 @@ namespace gr {
         x_values.push_back(magnitudes[i]*cos(angles[i]/180.0*M_PI));
         y_values.push_back(magnitudes[i]*sin(angles[i]/180.0*M_PI));
       }
-      curve->setSamples(x_values, y_values);
+      curve->setData(x_values, y_values);
       plot->replot();
     }
 

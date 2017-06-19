@@ -25,27 +25,8 @@
 #include <antennapattern/api.h>
 #include <gnuradio/sync_block.h>
 
-class QwtPlot;
-class QwtPlotCurve;
-class QwtPlotMarker;
-
 namespace gr {
   namespace antennapattern {
-
-    /**
-     * Polar diagram widget.
-     **/
-    class polar_diagram_widget : public QWidget{
-      Q_OBJECT
-	     public:
-		    polar_diagram_widget(QWidget *parent = NULL);
-       public slots:
-        void update_plot(QVector<double> angles, QVector<double> magnitudes);
-       private:
-        QwtPlot *plot;
-        QwtPlotCurve* curve;
-    }
-
     /*!
      * \brief <+description of block+>
      * \ingroup antennapattern

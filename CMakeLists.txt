@@ -80,6 +80,8 @@ endif()
 ########################################################################
 
 find_package(Qt4 4.2.0 COMPONENTS QtCore QtGui)
+find_package(Qwt)
+set(QWT_LIBRARIES "qwt-qt4")
 
 ########################################################################
 # Install directories
