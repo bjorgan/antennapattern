@@ -72,7 +72,13 @@ namespace gr {
     /**
      * Calculate student-T statistics for two clusters.
      **/
-    double clusters_t_statistics(const struct cluster &d_cluster_1, const struct cluster &d_cluster_2);
+    double clusters_t_statistics(const struct cluster &cluster_1, const struct cluster &cluster_2);
+
+    /**
+     * Calculate the probability that the cluster would produce
+     * a sample larger than the input sample.
+     **/
+    double cluster_probability(const struct cluster &cluster, double sample);
 
     class powerestimation_cf_impl : public powerestimation_cf
     {

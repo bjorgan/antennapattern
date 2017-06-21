@@ -87,6 +87,15 @@ namespace gr {
       return fabs(cluster.mean - sample);
     }
 
+    double cluster_probability(const struct cluster &cluster, double sample)
+    {
+      //normalize
+      sample = (sample - cluster.mean)/cluster_stdev(cluster);
+
+      //calculate probability P(z > sample) under standard normal distribution
+      return 1-0.5*erfc(-sample*M_SQRT1_2);
+    }
+
     double cluster_var(const struct cluster &cluster)
     {
       if (cluster.n > 1) {
@@ -155,42 +164,60 @@ namespace gr {
           continue;
         }
 
-        //find which mean the current sample is the closest, and update either high or low correspondingly
-        double distance_1 = cluster_distance(d_low_level_cluster, magnitude);
-        double distance_2 = cluster_distance(d_high_level_cluster, magnitude);
-        double max_stdev = std::max(cluster_stdev(d_low_level_cluster), cluster_stdev(d_high_level_cluster));
-        double min_stdev = std::min(cluster_stdev(d_low_level_cluster), cluster_stdev(d_high_level_cluster));
-        const int NUM_STDEVS = 3;
-        if ((distance_1 < NUM_STDEVS*min_stdev) && (distance_2 < NUM_STDEVS*min_stdev)) {
-          //select one of the clusters randomly if the sample is within the fuzzy boundary of both clusters
-          if (rand()*1.0/RAND_MAX > 0.5) {
+        //not ready for output yet: do initial characterization of high and low
+        //by classifying samples by distance from each mean, and updating each level
+        //(assumed that clusters are stable, so should be able to do this)
+        if (!d_ready) {
+          //find which mean the current sample is the closest, and update either high or low correspondingly
+          double distance_1 = cluster_distance(d_low_level_cluster, magnitude);
+          double distance_2 = cluster_distance(d_high_level_cluster, magnitude);
+          double max_stdev = std::max(cluster_stdev(d_low_level_cluster), cluster_stdev(d_high_level_cluster));
+          double min_stdev = std::min(cluster_stdev(d_low_level_cluster), cluster_stdev(d_high_level_cluster));
+          const int NUM_STDEVS = 3;
+          if ((distance_1 < NUM_STDEVS*min_stdev) && (distance_2 < NUM_STDEVS*min_stdev)) {
+            //select one of the clusters randomly if the sample is within the fuzzy boundary of both clusters
+            if (rand()*1.0/RAND_MAX > 0.5) {
+              cluster_update(d_low_level_cluster, magnitude);
+            } else {
+              cluster_update(d_high_level_cluster, magnitude);
+            }
+          } else if (distance_1 < distance_2) {
             cluster_update(d_low_level_cluster, magnitude);
+          } else if (distance_1 > distance_2) {
+            cluster_update(d_high_level_cluster, magnitude);
           } else {
+            //update both if distances are equal
+            cluster_update(d_low_level_cluster, magnitude);
             cluster_update(d_high_level_cluster, magnitude);
           }
-        } else if (distance_1 < distance_2) {
-          cluster_update(d_low_level_cluster, magnitude);
-        } else if (distance_1 > distance_2) {
-          cluster_update(d_high_level_cluster, magnitude);
+
+          //if means are within the standard error of each other and a sample is drastically different, we should try to reinitialize one of the clusters in order to try to push the current status quo
+          if ((cluster_distance(d_low_level_cluster, d_high_level_cluster.mean) < NUM_STDEVS*min_stdev) && (std::min(distance_1, distance_2) > NUM_STDEVS*min_stdev)) {
+            d_high_level_cluster.n = 1;
+            d_high_level_cluster.mean = magnitude;
+          }
+
+          //if current T statistics is larger than the pre-defined threshold,
+          //we might have characterized the low and high cluster and block is ready for
+          //output.
+          d_T_statistics = clusters_t_statistics(d_low_level_cluster, d_high_level_cluster);
+          const double MIN_T_THRESHOLD = 10;
+          if (fabs(d_T_statistics) > MIN_T_THRESHOLD) {
+            d_ready = true;
+          }
         } else {
-          //update both if distances are equal
-          cluster_update(d_low_level_cluster, magnitude);
-          cluster_update(d_high_level_cluster, magnitude);
-        }
-
-        //if means are within the standard error of each other and a sample is drastically different, we should try to reinitialize one of the clusters in order to try to push the current status quo
-        if ((cluster_distance(d_low_level_cluster, d_high_level_cluster.mean) < NUM_STDEVS*min_stdev) && (std::min(distance_1, distance_2) > NUM_STDEVS*min_stdev)) {
-          d_high_level_cluster.n = 1;
-          d_high_level_cluster.mean = magnitude;
-        }
-
-        //if current T statistics is larger than the pre-defined threshold,
-        //we might have characterized the low and high cluster and block is ready for
-        //output.
-        d_T_statistics = clusters_t_statistics(d_low_level_cluster, d_high_level_cluster);
-        const double MIN_T_THRESHOLD = 10;
-        if (fabs(d_T_statistics) > MIN_T_THRESHOLD) {
-          d_ready = true;
+          //classify samples according to probability for input sample to occur when assuming
+          //that the sample is distributed according to low level (can't use
+          //strategy above now since clusters are not stable, but low level should be
+          //accurately characterized by now)
+          double p_low = cluster_probability(d_low_level_cluster, magnitude);
+          const double P_THRESH = 0.01;
+          if (p_low < P_THRESH) {
+            out[output_index++] = 20*log10(magnitude) - 20*log10(d_low_level_cluster.mean);
+            cluster_update(d_high_level_cluster, magnitude);
+          } else {
+            cluster_update(d_low_level_cluster, magnitude);
+          }
         }
 
         //switch around which cluster characterize the low and high level
@@ -199,11 +226,6 @@ namespace gr {
           temp_cluster = d_high_level_cluster;
           d_high_level_cluster = d_low_level_cluster;
           d_low_level_cluster = temp_cluster;
-        }
-
-        //set output to difference between low and high level if current sample belongs to the high level
-        if (d_ready && (cluster_distance(d_high_level_cluster, magnitude) < cluster_distance(d_low_level_cluster, magnitude))) {
-          out[output_index++] = 20*log10(magnitude) - 20*log10(d_low_level_cluster.mean);
         }
       }
 
