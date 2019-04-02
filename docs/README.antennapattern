@@ -22,3 +22,9 @@ Since pattern_sink_f collects power at each tagged angle, you can safely turn ar
 Also has a block artificial_angle_tagger for tagging the stream
 with linearly increasing angles from a defined start to end, for testing
 the functionality against an existing, captured metafile.
+
+
+2019-04-02: This probably won't work that well, so rather see the offline analysis tools outlined and linked from
+https://www.la1k.no/2018/06/27/extracting-the-antenna-pattern-from-a-beacon-signal-pt-i-initial-investigations-using-autocorrelation/.
+These are a further development of ideas investigated by developing this GNU Radio module, but doing the work offline
+and in a more convenient way.
